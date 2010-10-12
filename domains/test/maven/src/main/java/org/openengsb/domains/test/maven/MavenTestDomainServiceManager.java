@@ -22,7 +22,6 @@ import org.openengsb.core.common.AbstractServiceManager;
 import org.openengsb.core.common.ServiceInstanceFactory;
 import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
 import org.openengsb.domains.test.TestDomain;
-import org.openengsb.domains.test.maven.internal.MavenTestDomainServiceImpl;
 
 public class MavenTestDomainServiceManager extends AbstractServiceManager<TestDomain, MavenTestDomainServiceImpl> {
 

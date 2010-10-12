@@ -79,6 +79,14 @@ public final class OpenEngSBBundles {
         .mavenBundle(new MavenArtifactUrlReference().groupId("org.openengsb.domains.report").artifactId(
             "openengsb-domains-report-plaintext"));
 
+    public static final MavenArtifactProvisionOption OPENENGSB_DOMAINS_TEST_IMPLEMENTATION = CoreOptions
+        .mavenBundle(new MavenArtifactUrlReference().groupId("org.openengsb.domains.test").artifactId(
+            "openengsb-domains-test-implementation"));
+
+    public static final MavenArtifactProvisionOption OPENENGSB_DOMAINS_TEST_MAVEN = CoreOptions
+        .mavenBundle(new MavenArtifactUrlReference().groupId("org.openengsb.domains.test").artifactId(
+            "openengsb-domains-test-maven"));
+
     public static final MavenArtifactProvisionOption OPENENGSB_UI_WEB = CoreOptions
         .mavenBundle(new MavenArtifactUrlReference().groupId("org.openengsb.ui").artifactId("openengsb-ui-web")
             .type("war"));

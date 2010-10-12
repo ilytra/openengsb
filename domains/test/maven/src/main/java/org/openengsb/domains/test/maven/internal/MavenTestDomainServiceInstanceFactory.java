@@ -21,6 +21,7 @@ import java.util.Map;
 import org.openengsb.core.common.ServiceInstanceFactory;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.domains.test.TestDomain;
+import org.openengsb.domains.test.maven.MavenTestDomainServiceImpl;
 
 public class MavenTestDomainServiceInstanceFactory implements
         ServiceInstanceFactory<TestDomain, MavenTestDomainServiceImpl> {

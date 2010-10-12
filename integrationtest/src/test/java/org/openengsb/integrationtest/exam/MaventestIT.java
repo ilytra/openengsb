@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.context.ContextCurrentService;
-import org.openengsb.domains.test.maven.internal.MavenTestDomainServiceImpl;
+import org.openengsb.domains.test.maven.MavenTestDomainServiceImpl;
 import org.openengsb.integrationtest.util.AbstractExamTestHelper;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 

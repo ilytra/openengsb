@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.domains.test.maven.internal;
+package org.openengsb.domains.test.maven;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

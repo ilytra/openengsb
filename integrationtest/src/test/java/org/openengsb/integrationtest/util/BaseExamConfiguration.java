@@ -63,6 +63,8 @@ public final class BaseExamConfiguration {
         baseConfiguration.add(CoreOptions.provision(OpenEngSBBundles.OPENENGSB_DOMAINS_NOTIFICATION_EMAIL));
         baseConfiguration.add(CoreOptions.provision(OpenEngSBBundles.OPENENGSB_DOMAINS_REPORT_IMPLEMENTATION));
         baseConfiguration.add(CoreOptions.provision(OpenEngSBBundles.OPENENGSB_DOMAINS_REPORT_PLAINTEXT));
+        baseConfiguration.add(CoreOptions.provision(OpenEngSBBundles.OPENENGSB_DOMAINS_TEST_IMPLEMENTATION));
+        baseConfiguration.add(CoreOptions.provision(OpenEngSBBundles.OPENENGSB_DOMAINS_TEST_MAVEN));
         baseConfiguration.add(OpenEngSBBundles.OPENENGSB_UI_WEB);
     }
 
