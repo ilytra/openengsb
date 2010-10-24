@@ -20,9 +20,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openengsb.core.common.util.AliveState;
 import org.openengsb.domains.test.TestDomain;
-import org.openengsb.maven.common.AbstractMavenDomainImpl;
-import org.openengsb.maven.common.MavenParameters;
-import org.openengsb.maven.common.MavenResult;
+import org.openengsb.domains.test.maven.internal.AbstractMavenDomainImpl;
+import org.openengsb.domains.test.maven.internal.MavenParameters;
+import org.openengsb.domains.test.maven.internal.MavenResult;
 
 public class MavenTestDomainServiceImpl extends AbstractMavenDomainImpl implements TestDomain {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.maven.common;
+package org.openengsb.domains.test.maven.internal;
 
 /**
  * This exception describes every exception thrown from Maven during different

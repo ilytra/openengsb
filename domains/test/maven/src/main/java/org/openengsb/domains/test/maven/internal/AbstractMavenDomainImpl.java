@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.maven.common;
+package org.openengsb.domains.test.maven.internal;
 
 import java.io.File;
 import java.util.List;
@@ -38,14 +38,15 @@ public class AbstractMavenDomainImpl {
 
         params.setExecutionRequestProperties(executionRequestProperties);
         params.setBaseDir(new File(baseDir));
-        params.setGoals(goals.toArray(new String[goals.size()]));
-
+        if (goals != null) {
+            params.setGoals(goals.toArray(new String[goals.size()]));
+        }
         return params;
     }
 
     protected MavenResult callMaven(MavenParameters params) {
-        MavenConnector maven = new MavenConnector(params.getBaseDir(), params.getGoals(), params
-                .getExecutionRequestProperties());
+        MavenConnector maven =
+            new MavenConnector(params.getBaseDir(), params.getGoals(), params.getExecutionRequestProperties());
         log.info("Executing embedded maven with parameters: " + params);
         return maven.execute();
     }

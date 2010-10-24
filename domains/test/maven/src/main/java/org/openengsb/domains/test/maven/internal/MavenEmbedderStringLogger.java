@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.openengsb.maven.common;
+package org.openengsb.domains.test.maven.internal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
