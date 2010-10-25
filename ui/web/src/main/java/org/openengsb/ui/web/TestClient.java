@@ -41,7 +41,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -59,13 +58,13 @@ import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.DomainProvider;
 import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.ui.web.editor.BeanArgumentPanel;
 import org.openengsb.ui.web.editor.SimpleArgumentPanel;
 import org.openengsb.ui.web.model.LocalizableStringModel;
 import org.openengsb.ui.web.model.MethodCall;
 import org.openengsb.ui.web.model.MethodId;
 import org.openengsb.ui.web.model.ServiceId;
-import org.openengsb.ui.web.service.DomainService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -100,33 +99,48 @@ public class TestClient extends BasePage {
     private String lastServiceId;
 
     public TestClient() {
-        IModel<List<ServiceManager>> managersModel = new LoadableDetachableModel<List<ServiceManager>>() {
-            @Override
-            protected List<ServiceManager> load() {
-                List<ServiceManager> managers = new ArrayList<ServiceManager>(services.domains().size());
-                for (DomainProvider provider : services.domains()) {
-                    managers.addAll(services.serviceManagersForDomain(provider.getDomainInterface()));
-                }
-                return managers;
-            }
-        };
         WebMarkupContainer serviceManagementContainer = new WebMarkupContainer("serviceManagementContainer");
         serviceManagementContainer.setOutputMarkupId(true);
         add(serviceManagementContainer);
-        serviceManagementContainer.add(new ListView<ServiceManager>("services", managersModel) {
+
+        IModel<List<DomainProvider>> domainModel = new LoadableDetachableModel<List<DomainProvider>>() {
+            @Override
+            protected List<DomainProvider> load() {
+                return services.domains();
+            }
+        };
+
+        serviceManagementContainer.add(new ListView<DomainProvider>("domains", domainModel) {
 
             @Override
-            protected void populateItem(ListItem<ServiceManager> item) {
-                ServiceDescriptor desc = item.getModelObject().getDescriptor();
-                item.add(new Link<ServiceManager>("create.new", item.getModel()) {
+            protected void populateItem(final ListItem<DomainProvider> item) {
+                item.add(new Label("domain.name", new LocalizableStringModel(this, item.getModelObject().getName())));
+                item.add(new Label("domain.description", new LocalizableStringModel(this, item.getModelObject()
+                    .getDescription())));
+                item.add(new Label("domain.class", item.getModelObject().getDomainInterface().getName()));
+                IModel<List<ServiceManager>> managersModel = new LoadableDetachableModel<List<ServiceManager>>() {
+                    @Override
+                    protected List<ServiceManager> load() {
+                        return services.serviceManagersForDomain(item.getModelObject().getDomainInterface());
+                    }
+                };
+                item.add(new ListView<ServiceManager>("services", managersModel) {
 
                     @Override
-                    public void onClick() {
-                        setResponsePage(new ConnectorEditorPage(getModelObject()));
+                    protected void populateItem(ListItem<ServiceManager> item) {
+                        ServiceDescriptor desc = item.getModelObject().getDescriptor();
+                        item.add(new Link<ServiceManager>("create.new", item.getModel()) {
+
+                            @Override
+                            public void onClick() {
+                                setResponsePage(new ConnectorEditorPage(getModelObject()));
+                            }
+                        });
+                        item.add(new Label("service.name", new LocalizableStringModel(this, desc.getName())));
+                        item.add(new Label("service.description", new LocalizableStringModel(this, desc
+                            .getDescription())));
                     }
                 });
-                item.add(new Label("service.name", new LocalizableStringModel(this, desc.getName())));
-                item.add(new Label("service.description", new LocalizableStringModel(this, desc.getDescription())));
             }
         });
 
@@ -171,6 +185,7 @@ public class TestClient extends BasePage {
         };
         serviceList.setOutputMarkupId(true);
         form.add(serviceList);
+        serviceList.getTreeState().expandAll();
 
         methodList = new DropDownChoice<MethodId>("methodList");
         methodList.setModel(new PropertyModel<MethodId>(call, "method"));
@@ -215,11 +230,11 @@ public class TestClient extends BasePage {
         feedbackPanel = new FeedbackPanel("feedback");
         feedbackPanel.setOutputMarkupId(true);
         add(feedbackPanel);
-        this.add(new BookmarkablePageLink<Index>("index", Index.class));
     }
 
     public TestClient(ServiceId jumpToService) {
         this();
+        serviceList.getTreeState().collapseAll();
         TreeModel treeModel = serviceList.getModelObject();
         DefaultMutableTreeNode serviceNode = findService((DefaultMutableTreeNode) treeModel.getRoot(), jumpToService);
         expandAllUntilChild(serviceNode);
@@ -321,7 +336,7 @@ public class TestClient extends BasePage {
     private Class<?> guessDomainInterface(Object serviceObject) {
         Class<?>[] interfaces = MethodUtil.getAllInterfaces(serviceObject);
         for (Class<?> candidate : interfaces) {
-            if (!candidate.getName().equals(Domain.class) && candidate.getName().startsWith("org.openengsb.domains")) {
+            if (!candidate.equals(Domain.class) && candidate.getName().startsWith("org.openengsb.domains")) {
                 return candidate;
             }
         }

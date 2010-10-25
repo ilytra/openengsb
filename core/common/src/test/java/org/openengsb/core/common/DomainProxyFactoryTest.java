@@ -16,6 +16,12 @@
 
 package org.openengsb.core.common;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.openengsb.core.common.context.ContextService;
@@ -24,21 +30,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertTrue;
-
 public class DomainProxyFactoryTest {
 
     public interface TestInterface extends Domain {
         boolean methodx();
     }
 
-    public class DefaultImpl implements TestInterface {
+    public static class DefaultImpl implements TestInterface {
+        @Override
         public boolean methodx() {
             return true;
         }
@@ -64,7 +63,7 @@ public class DomainProxyFactoryTest {
         bundleContextMock = mock(BundleContext.class);
         ServiceReference serviceRefMock = mock(ServiceReference.class);
         when(bundleContextMock.getServiceReferences(anyString(), contains("testService"))).thenReturn(
-                new ServiceReference[] {serviceRefMock });
+                new ServiceReference[]{ serviceRefMock });
         when(bundleContextMock.getService(serviceRefMock)).thenReturn(targetService);
     }
 

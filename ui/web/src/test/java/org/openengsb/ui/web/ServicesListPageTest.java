@@ -40,8 +40,8 @@ import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.PassThroughLocalizableString;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.util.AliveState;
-import org.openengsb.ui.web.service.DomainService;
 import org.osgi.framework.ServiceReference;
 
 public class ServicesListPageTest {
@@ -56,7 +56,7 @@ public class ServicesListPageTest {
         void doSomethingToChangeState();
     }
 
-    public class TestService implements TestInterface {
+    public static class TestService implements TestInterface {
 
         private AliveState aliveState = AliveState.CONNECTING;
 
@@ -189,7 +189,6 @@ public class ServicesListPageTest {
     @Test
     public void verifyIfEditButtonAndDeleteButtonExist_ShouldReturnTrue() {
         setUpServicesMap();
-
 
         tester.startPage(ServiceListPage.class);
         tester.assertComponent("connectingServicePanel:connectingServices:0:updateService", AjaxLink.class);

@@ -68,7 +68,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>${plugin.assembly.version}</version>
+        <version>${maven.plugin.assembly.version}</version>
         <configuration>
           <appendAssemblyId>true</appendAssemblyId>
           <descriptors>
@@ -79,10 +79,10 @@
         </configuration>
         <executions>
           <execution>
-            <id>make-assembly</id> 
+            <id>make-assembly</id>
             <phase>package</phase>
             <goals>
-              <goal>single</goal> 
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>

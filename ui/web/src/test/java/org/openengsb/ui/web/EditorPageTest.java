@@ -103,7 +103,7 @@ public class EditorPageTest {
     public void addServiceManagerValidationError_ShouldPutErrorMessagesOnPage() {
         Map<String, String> errorMessages = new HashMap<String, String>();
         errorMessages.put("a", "validation.service.not");
-        when(manager.updateWithValidation(Mockito.anyString(), Mockito.anyMap())).thenReturn(
+        when(manager.update(Mockito.anyString(), Mockito.anyMap())).thenReturn(
                 new MultipleAttributeValidationResultImpl(false, errorMessages));
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
@@ -115,7 +115,7 @@ public class EditorPageTest {
         FormTester formTester = tester.newFormTester("editor:form");
         formTester.setValue("fields:id:row:field", "someValue");
         formTester.submit();
-        tester.assertErrorMessages(new String[]{"Service Validation Error"});
+        tester.assertErrorMessages(new String[]{ "Service Validation Error" });
         tester.assertRenderedPage(ConnectorEditorPage.class);
     }
 
@@ -125,7 +125,7 @@ public class EditorPageTest {
     public void uncheckValidationCheckbox_shouldBypassValidation() {
         Map<String, String> errorMessages = new HashMap<String, String>();
         errorMessages.put("a", "validation.service.not");
-        when(manager.updateWithValidation(Mockito.anyString(), Mockito.anyMap())).thenReturn(
+        when(manager.update(Mockito.anyString(), Mockito.anyMap())).thenReturn(
                 new MultipleAttributeValidationResultImpl(false, errorMessages));
         WicketTester tester = new WicketTester();
         tester.startPage(new ITestPageSource() {
@@ -139,8 +139,8 @@ public class EditorPageTest {
         formTester.setValue("validate", false);
         formTester.submit();
         tester.assertErrorMessages(new String[]{});
-        tester.assertInfoMessages(new String[]{"Service can be added"});
+        tester.assertInfoMessages(new String[]{ "Service can be added" });
         Mockito.verify(manager).update(Mockito.anyString(), Mockito.anyMap());
-        Mockito.verify(manager, Mockito.never()).updateWithValidation(Mockito.anyString(), Mockito.anyMap());
+        Mockito.verify(manager, Mockito.never()).update(Mockito.anyString(), Mockito.anyMap());
     }
 }

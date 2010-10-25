@@ -92,7 +92,7 @@
       <version>${felix.version}</version>
       <optional>true</optional>
     </dependency>
- 
+
     <!-- Apache Felix Environment -->
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -130,7 +130,7 @@
       <artifactId>org.apache.felix.gogo.runtime</artifactId>
       <version>${felix.gogo.version}</version>
     </dependency>
-   
+
     <!-- Pax Logging -->
     <dependency>
       <groupId>org.ops4j.pax.logging</groupId>
@@ -142,7 +142,7 @@
       <artifactId>pax-logging-api</artifactId>
       <version>${pax.logging.version}</version>
     </dependency>
-    
+
     <!-- Pax URL -->
     <dependency>
       <groupId>org.ops4j.pax.url</groupId>
@@ -196,7 +196,7 @@
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
     </dependency>
-        
+
     <!-- Spring DM Dependencies -->
     <dependency>
       <groupId>org.springframework.osgi</groupId>
@@ -238,7 +238,7 @@
           <artifactId>org.springframework.core</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-io</artifactId>
@@ -608,9 +608,64 @@
     </dependency>
 
     <dependency>
-      <groupId>com.db4o</groupId>
-      <artifactId>com.springsource.com.db4o.java5</artifactId>
-      <version>${db4o.version}</version>
+      <groupId>javax.jms</groupId>
+      <artifactId>com.springsource.javax.jms</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jms</artifactId>
+      <version>${spring.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-core</artifactId>
+      <version>${activemq.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>com.springsource.javax.management.j2ee</artifactId>
+      <version>${org.apache.geronimo.specs.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>com.springsource.javax.ejb</artifactId>
+      <version>${javax.ejb.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.rpc</groupId>
+      <artifactId>com.springsource.javax.xml.rpc</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.xml.soap</groupId>
+      <artifactId>com.springsource.javax.xml.soap</artifactId>
+      <version>${javax.xml.soap}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${jgit.version}</version>
     </dependency>
 
   </dependencies>

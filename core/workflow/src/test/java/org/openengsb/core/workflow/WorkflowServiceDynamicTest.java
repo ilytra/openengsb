@@ -32,6 +32,8 @@ import org.openengsb.core.common.Event;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.workflow.internal.WorkflowServiceImpl;
 import org.openengsb.core.workflow.internal.dirsource.DirectoryRuleSource;
+import org.openengsb.core.workflow.model.RuleBaseElementId;
+import org.openengsb.core.workflow.model.RuleBaseElementType;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
@@ -74,6 +76,11 @@ public class WorkflowServiceDynamicTest {
 
         notification = mock(DummyNotificationDomain.class);
         when(bundleContext.getService(notificationReference)).thenReturn(notification);
+
+    }
+
+    private void mockDomain(String name) throws RuleBaseException {
+        manager.delete(new RuleBaseElementId(RuleBaseElementType.Global, name));
     }
 
     @After
@@ -146,8 +153,8 @@ public class WorkflowServiceDynamicTest {
     private void simulateServiceStart(ServiceReference reference) throws InvalidSyntaxException {
         String id = (String) reference.getProperty("id");
         String filter = String.format("(&(openengsb.service.type=domain)(id=%s))", id);
-        when(bundleContext.getAllServiceReferences(Domain.class.getName(), filter)).thenReturn(
-            new ServiceReference[]{reference});
+        when(bundleContext.getAllServiceReferences(Domain.class.getName(), filter))
+            .thenReturn(new ServiceReference[]{ reference });
         if (workflowService != null) {
             workflowService.serviceChanged(setupServiceEventMock(reference));
         }
@@ -157,13 +164,21 @@ public class WorkflowServiceDynamicTest {
         workflowService = new WorkflowServiceImpl();
         setupRulemanager();
         workflowService.setRulemanager(manager);
-        workflowService.setCurrentContextService(mock(ContextCurrentService.class));
+        ContextCurrentService currentContext = mock(ContextCurrentService.class);
+        when(currentContext.getCurrentContextId()).thenReturn("42");
+        workflowService.setCurrentContextService(currentContext);
         workflowService.setBundleContext(bundleContext);
+
     }
 
     private void setupRulemanager() throws RuleBaseException {
         manager = new DirectoryRuleSource("data/rulebase");
         ((DirectoryRuleSource) manager).init();
+        mockDomain("deploy");
+        mockDomain("build");
+        mockDomain("test");
+        mockDomain("report");
+        mockDomain("issue");
     }
 
 }

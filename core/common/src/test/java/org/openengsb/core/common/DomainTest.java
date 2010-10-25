@@ -16,13 +16,13 @@
 
 package org.openengsb.core.common;
 
-import org.junit.Test;
-import org.openengsb.core.common.util.AliveState;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import org.junit.Test;
+import org.openengsb.core.common.util.AliveState;
 
 public class DomainTest {
 
@@ -53,9 +53,9 @@ public class DomainTest {
 
     }
 
-    private class TestClass implements TestInterface {
+    private static class TestClass implements TestInterface {
         private AliveState state;
-        private FactoryMethodsInterface fm;
+        private final FactoryMethodsInterface fm;
 
         TestClass(FactoryMethodsInterface fm) {
             this.fm = fm;

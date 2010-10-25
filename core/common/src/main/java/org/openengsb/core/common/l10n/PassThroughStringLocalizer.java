@@ -21,15 +21,16 @@ import java.util.Locale;
 /**
  * A localizer that simple returns the key as localized string.
  */
+@SuppressWarnings("serial")
 public class PassThroughStringLocalizer implements StringLocalizer {
 
     @Override
-    public String getString(String key, Locale locale) {
+    public String getString(String key, Locale locale, String... parameters) {
         return key;
     }
 
     @Override
-    public LocalizableString getString(String key) {
+    public LocalizableString getString(String key, String... parameters) {
         return new PassThroughLocalizableString(key);
     }
 }

@@ -16,11 +16,16 @@
 
 package org.openengsb.core.workflow;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,21 +33,13 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openengsb.core.workflow.model.RuleBaseElementId;
 import org.openengsb.core.workflow.model.RuleBaseElementType;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
-import static org.junit.matchers.JUnitMatchers.hasItem;
-
 @RunWith(Parameterized.class)
 public abstract class AbstractRuleManagerCrudTest<SourceType extends RuleManager> extends
         AbstractRuleManagerTest<SourceType> {
 
     public static final class TestElement {
-        private RuleBaseElementId id;
-        private String code;
+        private final RuleBaseElementId id;
+        private final String code;
 
         public TestElement(RuleBaseElementId id, String code) {
             this.id = id;
@@ -73,7 +70,7 @@ public abstract class AbstractRuleManagerCrudTest<SourceType extends RuleManager
         testData.add(new TestElement(funcId1, func1));
         testData.add(new TestElement(funcId2, func2));
         testData.add(new TestElement(funcId2, func2));
-        data.add(new Object[] { testData });
+        data.add(new Object[]{ testData });
 
         testData = new ArrayList<TestElement>();
 
@@ -86,14 +83,14 @@ public abstract class AbstractRuleManagerCrudTest<SourceType extends RuleManager
         testData.add(new TestElement(ruleId1, rule2));
         testData.add(new TestElement(ruleId2, rule1));
         testData.add(new TestElement(ruleId2, rule2));
-        data.add(new Object[] { testData });
+        data.add(new Object[]{ testData });
 
         testData = new ArrayList<TestElement>();
         String sampleFlow = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<process xmlns=\"http://drools.org/drools-5.0/process\""
                 + "         xmlns:xs=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + "         xs:schemaLocation=\"http://drools.org/drools-5.0/process drools-processes-5.0.xsd\""
-                + "         type=\"RuleFlow\" name=\"flowname\" id=\"org.openengsb.flowId\" "
+                + "         type=\"RuleFlow\" name=\"flowname\" id=\"flowId\" "
                 + "package-name=\"org.openengsb\" >" + "" + "  <header>" + "  </header>" + "  <nodes>"
                 + "    <start id=\"1\" name=\"Start\" x=\"100\" y=\"100\" width=\"48\" height=\"48\" />"
                 + "    <end id=\"2\" name=\"End\" x=\"245\" y=\"105\" width=\"48\" height=\"48\" />" + "  </nodes>"
@@ -108,7 +105,7 @@ public abstract class AbstractRuleManagerCrudTest<SourceType extends RuleManager
         testData.add(new TestElement(flowId2, sampleFlow));
         testData.add(new TestElement(flowId2, sampleFlow));
 
-        data.add(new Object[] { testData });
+        data.add(new Object[]{ testData });
         // TODO: imports & globals
         // data.add(new Object[] { new
         // RuleBaseElementId(RuleBaseElementType.Import, "ignored",
@@ -131,12 +128,6 @@ public abstract class AbstractRuleManagerCrudTest<SourceType extends RuleManager
             this.code[i] = el.code;
             this.id[i] = el.id;
         }
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
     }
 
     @Test

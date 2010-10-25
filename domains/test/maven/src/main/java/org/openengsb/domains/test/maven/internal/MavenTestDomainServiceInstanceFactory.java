@@ -16,10 +16,15 @@
 
 package org.openengsb.domains.test.maven.internal;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openengsb.core.common.ServiceInstanceFactory;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
+import org.openengsb.core.common.util.AliveState;
+import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
+import org.openengsb.core.common.validation.MultipleAttributeValidationResultImpl;
 import org.openengsb.domains.test.TestDomain;
 import org.openengsb.domains.test.maven.MavenTestDomainServiceImpl;
 
@@ -49,5 +54,33 @@ public class MavenTestDomainServiceInstanceFactory implements
         builder.attribute(builder.newAttribute().id("basedir").name("service.basedir.name")
             .description("service.basedir.description").build());
         return builder.build();
+    }
+
+    @Override
+    public MultipleAttributeValidationResult updateValidation(MavenTestDomainServiceImpl instance,
+            Map<String, String> attributes) {
+        updateServiceInstance(instance, attributes);
+        if (AliveState.ONLINE == instance.getAliveState()) {
+            Map<String, String> emptyMap = Collections.emptyMap();
+            return new MultipleAttributeValidationResultImpl(true, emptyMap);
+        } else {
+            Map<String, String> errors = new HashMap<String, String>();
+            errors.put("basedir", "invalid pom");
+            return new MultipleAttributeValidationResultImpl(false, errors);
+        }
+    }
+
+    @Override
+    public MultipleAttributeValidationResult createValidation(String id, Map<String, String> attributes) {
+        MavenTestDomainServiceImpl service = createServiceInstance(id, attributes);
+        if (AliveState.ONLINE == service.getAliveState()) {
+            Map<String, String> emptyMap = Collections.emptyMap();
+            return new MultipleAttributeValidationResultImpl(true, emptyMap);
+        } else {
+            Map<String, String> errors = new HashMap<String, String>();
+            errors.put("basedir", "invalid pom");
+            return new MultipleAttributeValidationResultImpl(false, errors);
+        }
+
     }
 }

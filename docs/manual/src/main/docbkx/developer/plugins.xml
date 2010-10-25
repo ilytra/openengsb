@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2010 OpenEngSB Division, Vienna University of Technology
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<chapter xml:id="developer.plugins" version="5.0" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd
+  http://www.w3.org/1999/xlink http://www.docbook.org/xml/5.0/xsd/xlink.xsd
+  http://www.w3.org/2001/XMLSchema-instance http://www.w3.org/2001/XMLSchema-instance.xsd">
+  
+  <title>External Domains and Connectors</title>
+  
+  <para>TBW - Introduction</para>
+  
+  <para>TBW - What is the difference between internal and external domains and connectors.</para>
+  
+  <section xml:id="developer.plugins.csharp">
+    <title>Connect With CSharp</title>
+    <para>TBW - reevaluate for new plugin system.</para>
+    <para>The CSharp connector is written on basis of the Apache ActiveMQ NMS connector and with help of the Spring
+      NmsTemplate. The code is checked into the repository and could be found in <literal>nonjava/csharp</literal>.
+      There an EngSB.sln file. This project file has been developed with SharpDevelop 3, but is also tested with
+      VisualStudio 2008 CSharp Express Edition with the .Net Framework 3.5.</para>
+  </section>
+  
+  <section xml:id="developer.plugins.jms">
+    <title>Using JMS proxying</title>
+    <para>The current JMS Connector allows for internal method calls being redirected via JMS, as well as 
+    Events being raised through jms via an external source.</para>
+    <section>
+      <title>Proxying internal Connector calls</title>
+      <para>JMSConnector automatically exports a ServiceManager for every Domain to instantiate a proxy. The proxy
+      has to be created via the normal instantiation mechanism on the website. Whenever now a proxy method is called
+      the call is marshalled and sent via JMS to a queue named &lt;DomainID&gt;_method_send. The marshalling is done via
+      JSON. The mapping has the parameters type, which can be Call, Exception or Return, message, which in case 
+      of a method call is a simple serialisation of the arguments and name, which denotes the name of the 
+      method.</para>
+      <para>After sending the method call via JMS the proxy waits for a return at &lt;DomainID&gt;_method_return. The return
+      message can use the same parameters as the send serialisation (type, name, message), but name is ignored. The message
+      parameter is serialised to the correct return type if type is set to RETURN. If the type is Exception a new 
+      JMSException is thrown with the message.</para>
+      <para>By default a JMS Broker is started on port 6000.</para>
+    </section>
+    <section>
+      <title>Event handling via JMS</title>
+      <para>For every Domain found at the start of the OPENEngSB Server JMSConnector starts a listener on the 
+      &lt;DomainID&gt;_event_send queue. The parameters used are type and event. The type parameter is the class that
+      has to be used to deserialise the event and be used as the argument to raiseEvent. After the correct class is loaded
+      the content of the event parameter gets deserialised into an instance of the type parameter. The corresponding
+      raiseEvent method is then called for the domain supported by this EventListener.</para>
+      <para>When the Event was processed a message is sent to the &lt;DomainID&gt;_event_return queue with the type set
+      to RETURN and message set to OK. In case of Exception the type is set to exception and the message is set to 
+      the exception message.</para>
+    </section>
+  </section>
+</chapter>

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright 2010 OpenEngSB Division, Vienna University of Technology
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+
+<chapter xml:id="developer.howto.internal.domain" version="5.0" xmlns="http://docbook.org/ns/docbook"
+  xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd
+  http://www.w3.org/1999/xlink http://www.docbook.org/xml/5.0/xsd/xlink.xsd
+  http://www.w3.org/2001/XMLSchema-instance http://www.w3.org/2001/XMLSchema-instance.xsd">
+
+  <title>How To Create an Internal Domain</title>
+
+  <para>This chapter describes how to implement a domain for the OpenEngSB environment. A domain provides a common
+    interface and common events on how to interact with connectors for this domain. For a better description of what a
+    domain exactly consists of, take a look at the architecture guide <xref linkend="developer.chapter" />.</para>
+
+  <section>
+    <title>Prerequisites</title>
+    <para>In case it isn't known what a domain is and how it defines the interface and events for connectors, then (TODO
+      link to architecture) is a good starting point.</para>
+  </section>
+
+  <section>
+    <title>Creating a new domain project</title>
+
+    <para>To get developers started creating a new domain a Maven archetype is provided for creating the initial project
+      structure. Furthermore, if the new domain is developed in the OpenEngSB repository, a shell script can be found at
+        <literal>etc/scripts/gen-domain.sh</literal> as further convenience.</para>
+
+    <section>
+      <title>Using the Maven Archetype</title>
+
+      <para>TBW - explain all variables</para>
+    </section>
+
+    <section>
+      <title>Using the <literal>gen-domain.sh</literal> shell script</title>
+
+      <para>The script should be executed from the domains directory in your OpenEngSB repository.</para>
+
+      <literallayout><command>domains $</command> ../etc/scripts/gen-domain.sh</literallayout>
+
+      <para>You'll be asked to fill i a few variables the script needs to create the initial project structure. Based on
+        your input, the script tries to gues further values. Guessed values are displayed in brackets. If the guess is
+        correct, simply acknowledge with <literal>Return</literal>. As example, the following output has been recorded
+        while creating the Test domain:</para>
+
+      <literallayout><command>Domain Name (is mydomain):</command> test &lt;Enter>
+<command>Version (is 1.0.0-SNAPSHOT):</command> &lt;Enter>
+<command>Prefix for project names (is OpenEngSB :: Domains :: Test):</command> &lt;Enter></literallayout>
+
+      <para>Only the domain name has been filled in, while the rest has been correctly guessed by the script. After
+        giving the inputs, the Maven archetype gets executed and may ask for further inputs. You can simply hit
+          <literal>Return</literal>, as the values have been already correctly set by the script. If the script finishes
+        successfully two new Maven projects, the domain parent and domain implementation project, have been created and
+        setup with a sample implementation for a domain.</para>
+    </section>
+
+    <section>
+      <title>Project structure</title>
+
+      <para>The newly created domain should have the exact same structure as the following listing:</para>
+
+      <programlisting>-- implementation
+|  -- pom.xml
+|  -- src
+|     -- main
+|     |  -- java
+|     |  -- org
+|     |     -- openengsb
+|     |        -- domains
+|     |           -- test
+|     |              -- MyDomain.java
+|     |              -- MyDomainEvents.java
+|     |              -- MyDomainProvider.java
+|     -- resources
+|        -- META-INF
+|        |   -- spring
+|        |      -- notification-context.xml
+|        -- OSGI-INF
+|           -- l10n
+|              -- bundle_de.properties
+|              -- bundle.properties
+-- pom.xml</programlisting>
+
+      <para>TBW - explain structure</para>
+
+      <para>Although the generated domain does in effect nothing, you can already start the OpenEngSB for testing with
+          <literal>mvn clean install pax:provision</literal> and the domain will be automatically be picked up and started.</para>
+
+      <para>TBW - Spring DM</para>
+
+      <para>Each OpenEngSB bundle (core, domain, connector) has been designed with localization in mind. E.g. the Maven
+        Archetype already creates to <literal>bundle*.properties</literal> files, one for English (bundle.properties)
+        and one for the German (bundle_de.properties) language. Each connector has to provide localization through the
+        properties files. For domains, this only means localization for a name and description of the domain
+        itself.</para>
+    </section>
+
+    <section>
+      <title>Customizing</title>
+
+      <para>TBW</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Integrating the Domain into the OpenEngSB environment</title>
+
+    <para>TBW</para>
+  </section>
+
+  <section>
+    <title>Components</title>
+    <orderedlist>
+      <listitem>
+        <para>Domain interface - This is the interface that connectors of that domain must implement. Operations that
+          connectors should provide, are specified here. Events that are raised by this Domain in unexpected fashion 
+          (e.g new commit in scm system) are specified on the Interface. The Raise Annotation and the array of Event 
+          classes it takes as an argument are used. If the Raise annotation is put on a method the events that 
+          are specified through the annotation are raised in sequence upon a call.</para>
+      </listitem>
+      <listitem>
+        <para>Domain event interface - This is the interface that the domain provides for its connectors to send events
+        into the OpenEngSB. The event interface contains a <literal>raiseEvent(SomeEvent event)</literal> method for each 
+        supported event type.</para>
+      </listitem>
+      <listitem>
+        <para>Domain Provider - The domain provider is a service that provides information about the domain itself. It
+          is used to determine which domains are currently registered in the environment. There is an abstract class,
+          that takes over most of the setup.</para>
+      </listitem>
+      <listitem>
+        <para>Spring context - There are three services, that must be registered with the OSGi service-environment. First
+          there is the domainprovider of course. Moreover the domain must provide a kind of connector itself, since it
+          must be able to handle service calls and redirect it to the default-connector specified in the current
+          context. And finally the domain provides an event interface for its connectors, which can be used by them to send
+          events into the OpenEngSB. The default implementation of this event interface simply forwards all events sent through
+          the domain to the workflow service. But domains can also provide their own implementation of their event interface and
+          add data to events or perform other tasks. There is a beanfactory that creates a Java-Proxy that can be used as 
+          ForwardService both for the forwarding of service calls from domain to connector and for the forwarding of events to
+          the workflow service. The service call ForwardService looks up the default-connector for the specified domain in the
+          current context and forwards the method-call right to it. The event forward service simply forwards all events to 
+          the workflow service of the OpenEngSB.</para>
+        <programlisting><![CDATA[<osgi:service>
+  <osgi:interfaces>
+    <!-- Every Connector must be registered with the Domain-interface -->
+    <value>org.openengsb.core.common.Domain</value>
+    <!-- The domain-interface goes here-->
+    <value>org.openengsb.domains.notification.NotificationDomain</value>
+  </osgi:interfaces>
+  <osgi:service-properties>
+    <!-- The convention for the service-id is "domains.<domain-name>" -->
+    <entry key="id" value="domains.notification" />
+    <!-- To allow other services (e.g. workflow) to distinguish the forward-service 
+      from other connector-instances, this attribute must be set to "domain" -->
+    <entry key="openengsb.service.type" value="domain" />
+  </osgi:service-properties>
+  <!-- use the bean-factory to generate the forward-service -->
+  <bean class="org.openengsb.core.common.DefaultDomainProxyFactoryBean">
+    <!-- Need to specify the domain-interface again -->
+    <property name="domainInterface">
+      <value>org.openengsb.domains.notification.NotificationDomain</value>
+    </property>
+    <!-- this is used as a lookup-key in the context -->
+    <property name="domainName" value="NotificationDomain" />
+    <!-- reference to the context-service (obtained below) -->
+    <property name="context" ref="contextService" />
+  </bean>
+</osgi:service>
+
+<osgi:service>
+  <osgi:interfaces>
+    <!-- The common domain event marker interface, each domain events interface has to 
+      extend -->
+    <value>org.openengsb.core.common.DomainEvents</value>
+    <!-- The specific event interface containing the raiseEvent methods -->
+    <value>org.openengsb.domains.notification.NotificationDomainEvents</value>
+  </osgi:interfaces>
+  <osgi:service-properties>
+  <!-- The convention for the service-id is "domains.<domain-name>.events" -->
+    <entry key="id" value="domains.notification.events" />
+    <entry key="openengsb.service.type" value="domain-events" />
+  </osgi:service-properties>
+  <!-- the default implementation of the event interface is provided by this class, 
+    which generates a proxy that forwards all events to the workflow service, 
+    obtained below -->
+  <bean class="org.openengsb.core.events.DomainEventsProxyFactoryBean">
+    <property name="domainEventInterface">
+      <!-- the domain event interface (same as above in the osgi:interfaces section -->
+      <value>org.openengsb.domains.notification.NotificationDomainEvents</value>
+    </property>
+    <property name="workflowService" ref="workflowService" />
+  </bean>
+</osgi:service>
+
+<osgi:reference id="workflowService" 
+  interface="org.openengsb.core.workflow.WorkflowService" />
+<osgi:reference id="contextService" 
+  interface="org.openengsb.core.common.context.ContextService" />]]>
+        </programlisting>
+      </listitem>
+    </orderedlist>
+  </section>
+
+</chapter>

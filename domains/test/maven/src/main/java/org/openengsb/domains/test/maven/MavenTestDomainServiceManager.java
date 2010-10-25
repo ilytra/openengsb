@@ -16,25 +16,13 @@
 
 package org.openengsb.domains.test.maven;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.openengsb.core.common.AbstractServiceManager;
 import org.openengsb.core.common.ServiceInstanceFactory;
-import org.openengsb.core.common.validation.MultipleAttributeValidationResult;
-import org.openengsb.core.common.validation.MultipleAttributeValidationResultImpl;
 import org.openengsb.domains.test.TestDomain;
 
 public class MavenTestDomainServiceManager extends AbstractServiceManager<TestDomain, MavenTestDomainServiceImpl> {
 
     public MavenTestDomainServiceManager(ServiceInstanceFactory<TestDomain, MavenTestDomainServiceImpl> factory) {
         super(factory);
-    }
-
-    @Override
-    public MultipleAttributeValidationResult updateWithValidation(String id, Map<String, String> attributes) {
-        super.update(id, attributes);
-        Map<String, String> errors = Collections.emptyMap();
-        return new MultipleAttributeValidationResultImpl(true, errors);
     }
 }

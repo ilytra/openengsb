@@ -23,7 +23,7 @@
     <artifactId>openengsb-domains-notification-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  
+
 
   <properties>
     <bundle.symbolicName>org.openengsb.domains.notification.email</bundle.symbolicName>
@@ -50,13 +50,19 @@
     <dependency>
       <groupId>org.openengsb.core</groupId>
       <artifactId>openengsb-core-common</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openengsb.core</groupId>
+      <artifactId>openengsb-core-persistence</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.openengsb.domains.notification</groupId>
       <artifactId>openengsb-domains-notification-implementation</artifactId>
-      <version>${pom.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

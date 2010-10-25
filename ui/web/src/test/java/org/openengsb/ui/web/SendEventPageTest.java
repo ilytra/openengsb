@@ -41,11 +41,11 @@ import org.mockito.Mockito;
 import org.openengsb.core.common.Event;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.WorkflowException;
 import org.openengsb.core.workflow.WorkflowService;
 import org.openengsb.ui.web.editor.EditorPanel;
-import org.openengsb.ui.web.service.DomainService;
 
 public class SendEventPageTest {
 
@@ -69,7 +69,7 @@ public class SendEventPageTest {
         context.putBean("eventService", eventService);
         context.putBean("domainService", mock(DomainService.class));
         context.putBean("contextCurrentService", mock(ContextCurrentService.class));
-        eventClasses = Arrays.<Class<? extends Event>>asList(Dummy.class, Dummy2.class, BrokenEvent.class);
+        eventClasses = Arrays.<Class<? extends Event>> asList(Dummy.class, Dummy2.class, BrokenEvent.class);
         tester.startPage(new SendEventPage(eventClasses));
         editorPanel = (EditorPanel) tester.getComponentFromLastRenderedPage("editor");
         dropdown = (DropDownChoice<Class<?>>) tester
@@ -184,7 +184,7 @@ public class SendEventPageTest {
 
     @Test
     public void processingEventthrowsException_shouldShowErrorFeedback() throws Exception {
-        doThrow(new WorkflowException()).when(eventService).processEvent(Mockito.<Event>any());
+        doThrow(new WorkflowException()).when(eventService).processEvent(Mockito.<Event> any());
         submitForm();
         tester.assertNoInfoMessage();
         assertThat(tester.getMessages(FeedbackMessage.ERROR).size(), is(1));

@@ -18,7 +18,9 @@ package org.openengsb.ui.web;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -60,13 +62,13 @@ import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.l10n.PassThroughLocalizableString;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.util.AliveState;
 import org.openengsb.ui.web.editor.BeanArgumentPanel;
 import org.openengsb.ui.web.editor.SimpleArgumentPanel;
 import org.openengsb.ui.web.model.MethodCall;
 import org.openengsb.ui.web.model.MethodId;
 import org.openengsb.ui.web.model.ServiceId;
-import org.openengsb.ui.web.service.DomainService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -116,7 +118,7 @@ public class TestClientTest {
     private ApplicationContextMock context;
     private TestService testService;
     private FormTester formTester;
-    private boolean serviceListExpanded;
+    private boolean serviceListExpanded = true;
     private BundleContext bundleContext;
 
     @Before
@@ -155,7 +157,9 @@ public class TestClientTest {
     public void testShowServiceInstancesInDropdown() throws Exception {
         List<ServiceReference> expected = setupAndStartTestClientPage();
 
-        expandServiceListTree();
+        if (!serviceListExpanded) {
+            expandServiceListTree();
+        }
         for (int index = 2; index < expected.size() + 2; index++) {
             tester.assertComponent("methodCallForm:serviceList:i:" + index + ":nodeComponent:contentLink",
                 AjaxLink.class);
@@ -174,8 +178,8 @@ public class TestClientTest {
         setupAndStartTestClientPage();
         setServiceInDropDown(0);
 
-        @SuppressWarnings("unchecked") Form<MethodCall> form = (Form<MethodCall>) tester
-            .getComponentFromLastRenderedPage("methodCallForm");
+        @SuppressWarnings("unchecked")
+        Form<MethodCall> form = (Form<MethodCall>) tester.getComponentFromLastRenderedPage("methodCallForm");
         MethodCall modelObject = form.getModelObject();
         ServiceId reference = new ServiceId(TestService.class.getName(), "test");
 
@@ -199,8 +203,9 @@ public class TestClientTest {
     @Test
     public void testShowMethodListInDropDown() throws Exception {
         setupAndStartTestClientPage();
-        @SuppressWarnings("unchecked") DropDownChoice<MethodId> methodList = (DropDownChoice<MethodId>) tester
-            .getComponentFromLastRenderedPage("methodCallForm:methodList");
+        @SuppressWarnings("unchecked")
+        DropDownChoice<MethodId> methodList =
+            (DropDownChoice<MethodId>) tester.getComponentFromLastRenderedPage("methodCallForm:methodList");
 
         setServiceInDropDown(0);
 
@@ -216,8 +221,8 @@ public class TestClientTest {
     public void testCreateArgumentList() throws Exception {
         setupAndStartTestClientPage();
 
-        Component argList = tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        Component argList =
+            tester.getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
 
         Assert.assertNotNull(argList);
     }
@@ -225,8 +230,9 @@ public class TestClientTest {
     @Test
     public void testCreateTextFieldsFor2StringArguments() throws Exception {
         setupAndStartTestClientPage();
-        RepeatingView argList = (RepeatingView) tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        RepeatingView argList =
+            (RepeatingView) tester
+                .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
 
         setServiceInDropDown(0);
         setMethodInDropDown(0);
@@ -246,8 +252,9 @@ public class TestClientTest {
     @Test
     public void testCreateTextFieldsForBean() throws Exception {
         setupAndStartTestClientPage();
-        RepeatingView argList = (RepeatingView) tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        RepeatingView argList =
+            (RepeatingView) tester
+                .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
 
         setServiceInDropDown(0);
         setMethodInDropDown(1);
@@ -262,8 +269,9 @@ public class TestClientTest {
     @Test
     public void testPerformMethodCall() throws Exception {
         setupAndStartTestClientPage();
-        RepeatingView argList = (RepeatingView) tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        RepeatingView argList =
+            (RepeatingView) tester
+                .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
 
         setServiceInDropDown(0);
         setMethodInDropDown(0);
@@ -304,8 +312,9 @@ public class TestClientTest {
     @Test
     public void testSelectMethodTwice() throws Exception {
         setupAndStartTestClientPage();
-        RepeatingView argList = (RepeatingView) tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        RepeatingView argList =
+            (RepeatingView) tester
+                .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
 
         setServiceInDropDown(0);
         setMethodInDropDown(0);
@@ -325,8 +334,9 @@ public class TestClientTest {
         formTester.setValue("argumentListContainer:argumentList:arg1:value", "test");
         tester.executeAjaxEvent("methodCallForm:submitButton", "onclick");
 
-        RepeatingView argList = (RepeatingView) tester
-            .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
+        RepeatingView argList =
+            (RepeatingView) tester
+                .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
         Assert.assertEquals(0, argList.size());
     }
 
@@ -370,8 +380,8 @@ public class TestClientTest {
         setupAndStartTestClientPage();
 
         Button button = (Button) tester.getComponentFromLastRenderedPage("methodCallForm:submitButton");
-        String buttonValue = tester.getApplication().getResourceSettings().getLocalizer()
-            .getString("form.call", button);
+        String buttonValue =
+            tester.getApplication().getResourceSettings().getLocalizer().getString("form.call", button);
         Assert.assertEquals(buttonValue, button.getValue());
     }
 
@@ -381,7 +391,8 @@ public class TestClientTest {
         setServiceInDropDown(0);
         setMethodInDropDown(0);
         setServiceInDropDown(0);
-        RepeatingView argList = (RepeatingView) tester
+        RepeatingView argList =
+            (RepeatingView) tester
                 .getComponentFromLastRenderedPage("methodCallForm:argumentListContainer:argumentList");
         assertThat(argList.size(), is(0));
     }
@@ -410,6 +421,7 @@ public class TestClientTest {
         LocalizableString nameMock = mock(LocalizableString.class);
         when(nameMock.getString(Mockito.<Locale> any())).thenReturn("testDomain");
         when(domainProviderMock.getName()).thenReturn(nameMock);
+        when(domainProviderMock.getDescription()).thenReturn(nameMock);
         when(domainProviderMock.getDomainInterface()).thenAnswer(new Answer<Class<? extends Domain>>() {
             @Override
             public Class<? extends Domain> answer(InvocationOnMock invocation) {
@@ -435,9 +447,8 @@ public class TestClientTest {
         ServiceDescriptor serviceDescriptorMock = Mockito.mock(ServiceDescriptor.class);
         Mockito.when(serviceDescriptorMock.getName()).thenReturn(new PassThroughLocalizableString("service.name"));
         Mockito.when(serviceDescriptorMock.getDescription()).thenReturn(
-                new PassThroughLocalizableString("service.description"));
+            new PassThroughLocalizableString("service.description"));
         Mockito.when(serviceManagerMock.getDescriptor()).thenReturn(serviceDescriptorMock);
-
 
         testService = new TestService();
         when(managedServicesMock.getService(any(ServiceReference.class))).thenReturn(testService);
@@ -454,8 +465,8 @@ public class TestClientTest {
     }
 
     private void setupTesterWithSpringMockContext() {
-        tester.getApplication()
-            .addComponentInstantiationListener(new SpringComponentInjector(tester.getApplication(), context, true));
+        tester.getApplication().addComponentInstantiationListener(
+            new SpringComponentInjector(tester.getApplication(), context, true));
     }
 
     @Test
@@ -463,10 +474,21 @@ public class TestClientTest {
         setupAndStartTestClientPage();
         tester.debugComponentTrees();
         tester.assertRenderedPage(TestClient.class);
-        Label name = (Label) tester
-                .getComponentFromLastRenderedPage("serviceManagementContainer:services:0:service.name");
-        Label description = (Label) tester
-                .getComponentFromLastRenderedPage("serviceManagementContainer:services:0:service.description");
+        Label domainName =
+            (Label) tester.getComponentFromLastRenderedPage("serviceManagementContainer:domains:0:domain.name");
+        Label domainDescription =
+            (Label) tester.getComponentFromLastRenderedPage("serviceManagementContainer:domains:0:domain.description");
+        Label domainClass =
+            (Label) tester.getComponentFromLastRenderedPage("serviceManagementContainer:domains:0:domain.class");
+        Label name =
+            (Label) tester
+                .getComponentFromLastRenderedPage("serviceManagementContainer:domains:0:services:0:service.name");
+        Label description =
+            (Label) tester.getComponentFromLastRenderedPage("serviceManagementContainer:domains:"
+                    + "0:services:0:service.description");
+        assertThat(domainName.getDefaultModel().getObject().toString(), equalTo("testDomain"));
+        assertThat(domainDescription.getDefaultModel().getObject().toString(), equalTo("testDomain"));
+        assertThat(domainClass.getDefaultModel().getObject().toString(), equalTo(TestInterface.class.getName()));
         Assert.assertEquals("service.name", name.getDefaultModel().getObject());
         Assert.assertEquals("service.description", description.getDefaultModel().getObject());
     }
@@ -474,15 +496,16 @@ public class TestClientTest {
     @Test
     public void showEditLink() {
         List<ServiceReference> expected = setupAndStartTestClientPage();
-        expandServiceListTree();
-        tester.debugComponentTrees();
+        if (!serviceListExpanded) {
+            expandServiceListTree();
+        }
         for (int index = 2; index < expected.size() + 2; index++) {
             tester.assertComponent("methodCallForm:serviceList:i:" + index + ":nodeComponent:contentLink",
                 AjaxLink.class);
         }
         tester.assertComponent("methodCallForm:editButton", AjaxButton.class);
         AjaxButton editButton = (AjaxButton) tester.getComponentFromLastRenderedPage("methodCallForm:editButton");
-        //should be disabled when nothing is selected
+        // should be disabled when nothing is selected
         Assert.assertEquals(false, editButton.isEnabled());
     }
 
@@ -505,8 +528,7 @@ public class TestClientTest {
         Mockito.when(serviceDescriptor.getId()).thenReturn("ManagerId");
         Mockito.when(serviceDescriptor.getName()).thenReturn(new PassThroughLocalizableString("ServiceName"));
         Mockito.when(serviceDescriptor.getDescription()).thenReturn(
-                new PassThroughLocalizableString("ServiceDescription"));
-
+            new PassThroughLocalizableString("ServiceDescription"));
 
         Mockito.when(serviceManagerMock.getDescriptor()).thenReturn(serviceDescriptor);
         Mockito.when(serviceManagerMock.getDescriptor()).thenReturn(serviceDescriptor);
@@ -514,8 +536,9 @@ public class TestClientTest {
         managerList.add(serviceManagerMock);
         Mockito.when(managedServicesMock.serviceManagersForDomain(TestInterface.class)).thenReturn(managerList);
 
-
-        expandServiceListTree();
+        if (!serviceListExpanded) {
+            expandServiceListTree();
+        }
         tester.debugComponentTrees();
         tester.clickLink("methodCallForm:serviceList:i:2:nodeComponent:contentLink", true);
         AjaxButton editButton = (AjaxButton) tester.getComponentFromLastRenderedPage("methodCallForm:editButton");
@@ -525,5 +548,4 @@ public class TestClientTest {
         ConnectorEditorPage editorPage = Mockito.mock(ConnectorEditorPage.class);
         tester.assertRenderedPage(editorPage.getPageClass());
     }
-
 }

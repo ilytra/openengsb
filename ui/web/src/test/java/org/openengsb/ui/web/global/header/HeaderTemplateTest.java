@@ -15,6 +15,7 @@
  */
 
 package org.openengsb.ui.web.global.header;
+
 /**
 
  Copyright 2010 OpenEngSB Division, Vienna University of Technology
@@ -33,7 +34,13 @@ package org.openengsb.ui.web.global.header;
 
  */
 
+import static org.mockito.Mockito.mock;
+
+import java.util.Arrays;
+import java.util.List;
+
 import junit.framework.Assert;
+
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.spring.injection.annot.test.AnnotApplicationContextMock;
@@ -44,26 +51,19 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openengsb.core.common.Event;
 import org.openengsb.core.common.context.ContextCurrentService;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.workflow.RuleManager;
 import org.openengsb.core.workflow.WorkflowService;
 import org.openengsb.ui.web.Index;
 import org.openengsb.ui.web.SendEventPage;
 import org.openengsb.ui.web.TestClient;
 import org.openengsb.ui.web.global.footer.ImprintPage;
-import org.openengsb.ui.web.service.DomainService;
 import org.osgi.framework.BundleContext;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
 
 public class HeaderTemplateTest {
 
-
     private WicketTester tester;
     private ApplicationContextMock context;
-
 
     @Before
     public void setup() {
@@ -142,7 +142,7 @@ public class HeaderTemplateTest {
         context.putBean("ruleManagerBean", mock(RuleManager.class));
         BundleContext bundleContext = mock(BundleContext.class);
         context.putBean(bundleContext);
-        List<Class<? extends Event>> eventClasses = Arrays.<Class<? extends Event>>asList(Dummy.class);
+        List<Class<? extends Event>> eventClasses = Arrays.<Class<? extends Event>> asList(Dummy.class);
         tester.startPage(new SendEventPage(eventClasses));
         tester.startPage(Index.class);
 

@@ -23,8 +23,8 @@
 
   <properties>
     <!-- Version Informtations -->
-    <openengsb.version.number>${pom.version}</openengsb.version.number>
-    <openengsb.version.name>"Emerald&nbsp;Eve"</openengsb.version.name>
+    <openengsb.version.number>${project.version}</openengsb.version.number>
+    <openengsb.version.name>"Fuzzy&#160;Fry"</openengsb.version.name>
     <!-- General Settings -->
     <root.basedir>${project.basedir}</root.basedir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,18 +32,32 @@
     <jdk.version>1.6</jdk.version>
     <mvn.version>2.1</mvn.version>
     <!-- Plugin Version -->
+    <plugin.eclipse.version>2.8</plugin.eclipse.version>
+    <plugin.surefire.version>2.5</plugin.surefire.version>
     <maven.plugin.release.version>3.0-beta-2</maven.plugin.release.version>
     <maven.plugin.compiler.version>2.3.1</maven.plugin.compiler.version>
-    <maven.plugin.enforcer.version>1.0-beta-1</maven.plugin.enforcer.version>
     <plugin.deploy.version>2.5</plugin.deploy.version>
     <twdata.cli.version>1.0.4</twdata.cli.version>
     <clover.version>3.0.2</clover.version>
     <plugin.pax.version>1.4</plugin.pax.version>
     <plugin.paxrunner.version>1.5.0</plugin.paxrunner.version>
     <plugin.release.version>2.0</plugin.release.version>
-    <plugin.assembly.version>2.2-beta-5</plugin.assembly.version>
     <plugin.site.version>2.1.1</plugin.site.version>
+    <plugin.source.version>2.1.2</plugin.source.version>
+    <plugin.mvn.license>1.8.0</plugin.mvn.license>
+    <plugin.javadoc.version>2.7</plugin.javadoc.version>
+    <plugin.helper.version>1.5</plugin.helper.version>
+    <plugin.resources.version>2.4.3</plugin.resources.version>
+    <plugin.install.version>2.3.1</plugin.install.version>
+    <plugin.wagon.webdav.version>1.0-beta-2</plugin.wagon.webdav.version>
+    <plugin.wagon.ssh.version>1.0-beta-6</plugin.wagon.ssh.version>
   </properties>
+
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>5</version>
+  </parent>
 
   <groupId>org.openengsb</groupId>
   <artifactId>openengsb-parent</artifactId>
@@ -59,9 +73,16 @@
 
   <url>http://openengsb.org</url>
 
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <modules>
     <module>tooling</module>
-    <module>archetypes</module>
     <module>docs</module>
     <module>poms</module>
     <module>provision</module>
@@ -71,7 +92,6 @@
     <module>core</module>
     <module>domains</module>
     <module>assembly</module>
-    <module>integrationtest</module>
   </modules>
 
   <inceptionYear>2009</inceptionYear>
@@ -230,7 +250,6 @@
   </contributors>
 
   <build>
-    <finalName>openengsb-${version}</finalName>
     <resources>
       <resource>
         <directory>src/main/resources</directory>
@@ -239,6 +258,18 @@
         </includes>
       </resource>
     </resources>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav</artifactId>
+        <version>${plugin.wagon.webdav.version}</version>
+      </extension>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-ssh</artifactId>
+        <version>${plugin.wagon.ssh.version}</version>
+      </extension>
+    </extensions>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -254,36 +285,14 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>${maven.plugin.enforcer.version}</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>[${mvn.version},)</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-          <execution>
-            <id>enforce-java</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>${jdk.version}</version>
-                </requireJavaVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <version>${plugin.eclipse.version}</version>
+        <configuration>
+          <downloadSources>true</downloadSources>
+          <downloadJavadocs>true</downloadJavadocs>
+          <workspace>eclipse-workspace</workspace>
+          <workspaceCodeStylesURL>file:etc/eclipse/formatter.xml</workspaceCodeStylesURL>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -314,7 +323,88 @@
         <version>${plugin.site.version}</version>
         <extensions>true</extensions>
       </plugin>
+      <plugin>
+        <inherited>false</inherited>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>${plugin.mvn.license}</version>
+        <configuration>
+          <header>${basedir}/etc/license/header.txt</header>
+          <failIfMissing>true</failIfMissing>
+          <aggregate>true</aggregate>
+          <strictCheck>true</strictCheck>
+          <excludes>
+            <exclude>etc/eclipse/checkstyle.xml</exclude>
+            <exclude>license.txt</exclude>
+            <exclude>**/*.vm</exclude>
+            <exclude>**/license.txt</exclude>
+            <exclude>runner/**</exclude>
+            <exclude>assembly/runner/**</exclude>
+            <exclude>features/**</exclude>
+            <exclude>NOTICE</exclude>
+            <exclude>**/*.3pm</exclude>
+            <exclude>**/*.dll</exclude>
+            <exclude>**/*.pdb</exclude>
+            <exclude>**/*.pdf</exclude>
+            <exclude>**/LICENSE</exclude>
+            <exclude>**/*checkstyle.xml</exclude>
+            <exclude>**/*.log.*</exclude>
+            <exclude>**/*.log</exclude>
+            <exclude>**/*.packlist</exclude>
+            <exclude>**/*.pod</exclude>
+            <exclude>**/imports</exclude>
+            <exclude>**/globals</exclude>
+            <exclude>**/.keep</exclude>
+            <exclude>**/EngSB.sln</exclude>
+            <exclude>**/.checkstyle</exclude>
+            <exclude>**/nb-configuration.xml</exclude>
+          </excludes>
+          <mapping>
+            <bnd>SCRIPT_STYLE</bnd>
+            <drl>SCRIPT_STYLE</drl>
+            <index>SCRIPT_STYLE</index>
+            <gitignore>SCRIPT_STYLE</gitignore>
+            <cfg>SCRIPT_STYLE</cfg>
+            <wsdl>XML_STYLE</wsdl>
+            <csproj>XML_STYLE</csproj>
+            <rf>XML_STYLE</rf>
+            <composite>SCRIPT_STYLE</composite>
+            <config>XML_STYLE</config>
+            <script>DOUBLESLASH_STYLE</script>
+            <rule>SCRIPT_STYLE</rule>
+          </mapping>
+        </configuration>
+      </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>${plugin.source.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>${plugin.javadoc.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>${plugin.resources.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>${plugin.install.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>${plugin.helper.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
   <profiles>
@@ -322,9 +412,6 @@
       <id>run</id>
       <activation>
         <activeByDefault>true</activeByDefault>
-        <property>
-          <name>run</name>
-        </property>
       </activation>
       <build>
         <plugins>
@@ -352,18 +439,6 @@
     </profile>
     <profile>
       <id>nightly</id>
-      <activation>
-        <property>
-          <name>nightly</name>
-        </property>
-      </activation>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>openengsb-snapshots</id>
-          <name>OpenEngSB Snapshot Repository</name>
-          <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-snapshots/</url>
-        </snapshotRepository>
-      </distributionManagement>
       <build>
         <plugins>
           <plugin>
@@ -372,9 +447,9 @@
             <version>${plugin.release.version}</version>
             <configuration>
               <autoVersionSubmodules>true</autoVersionSubmodules>
-              <preparationGoals>clean install -Pdocs -Dmaven.test.skip=true -DperformRelease=true</preparationGoals>
-              <goals>clean install pax:provision assembly:assembly deploy -Dmaven.test.skip=true -DperformRelease=true</goals>
-              <releaseProfiles>!run,docs,release,nightly</releaseProfiles>
+              <mavenExecutorId>forked-path</mavenExecutorId>
+              <useReleaseProfile>false</useReleaseProfile>
+              <arguments>-Psonatype-oss-release,!run,release,nightly</arguments>
             </configuration>
           </plugin>
         </plugins>
@@ -382,18 +457,6 @@
     </profile>
     <profile>
       <id>milestone</id>
-      <activation>
-        <property>
-          <name>milestone</name>
-        </property>
-      </activation>
-      <distributionManagement>
-        <repository>
-          <id>openengsb-releases</id>
-          <name>OpenEngSB Release Repository</name>
-          <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-releases/</url>
-        </repository>
-      </distributionManagement>
       <build>
         <plugins>
           <plugin>
@@ -402,9 +465,9 @@
             <version>${plugin.release.version}</version>
             <configuration>
               <autoVersionSubmodules>true</autoVersionSubmodules>
-              <preparationGoals>clean install -Pdocs -Dmaven.test.skip=true -DperformRelease=true</preparationGoals>
-              <goals>clean install pax:provision assembly:assembly deploy -Dmaven.test.skip=true -DperformRelease=true</goals>
-              <releaseProfiles>!run,docs,release,milestone</releaseProfiles>
+              <mavenExecutorId>forked-path</mavenExecutorId>
+              <useReleaseProfile>false</useReleaseProfile>
+              <arguments>-Psonatype-oss-release,!run,release,milestone</arguments>
             </configuration>
           </plugin>
         </plugins>
@@ -412,18 +475,6 @@
     </profile>
     <profile>
       <id>final</id>
-      <activation>
-        <property>
-          <name>final</name>
-        </property>
-      </activation>
-      <distributionManagement>
-        <repository>
-          <id>openengsb-releases</id>
-          <name>OpenEngSB Release Repository</name>
-          <url>dav:http://maven.openengsb.org/nexus/content/repositories/openengsb-releases/</url>
-        </repository>
-      </distributionManagement>
       <build>
         <plugins>
           <plugin>
@@ -432,50 +483,9 @@
             <version>${plugin.release.version}</version>
             <configuration>
               <autoVersionSubmodules>true</autoVersionSubmodules>
-              <preparationGoals>clean install -Pdocs -Dmaven.test.skip=true -DperformRelease=true</preparationGoals>
-              <goals>clean install pax:provision assembly:assembly deploy -Dmaven.test.skip=true -DperformRelease=true</goals>
-              <releaseProfiles>!run,docs,release,final</releaseProfiles>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>release</id>
-      <activation>
-        <property>
-          <name>release</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.ops4j</groupId>
-            <artifactId>maven-pax-plugin</artifactId>
-            <version>${plugin.pax.version}</version>
-            <configuration>
-              <runner>${plugin.paxrunner.version}</runner>
-              <framework>felix</framework>
-              <noDependencies>true</noDependencies>
-              <provision>
-                <param>--platform=felix</param>
-                <param>--executor=script</param>
-                <param>--workingDirectory=target/all/openengsb</param>
-                <param>--console=false</param>
-                <param>--ee=J2SE-1.6</param>
-                <param>--definitionURL=file:assembly/target/classes/felix.xml</param>
-                <param>--clean</param>
-              </provision>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>${plugin.assembly.version}</version>
-            <configuration>
-              <appendAssemblyId>false</appendAssemblyId>
-              <descriptors>
-                <descriptor>${project.basedir}/assembly/src/main/descriptors/openengsb.xml</descriptor>
-              </descriptors>
+              <mavenExecutorId>forked-path</mavenExecutorId>
+              <useReleaseProfile>false</useReleaseProfile>
+              <arguments>-Psonatype-oss-release,!run,release,final</arguments>
             </configuration>
           </plugin>
         </plugins>
@@ -501,6 +511,7 @@
                 <exclude>**/*.vm</exclude>
                 <exclude>**/license.txt</exclude>
                 <exclude>runner/**</exclude>
+                <exclude>assembly/runner/**</exclude>
                 <exclude>features/**</exclude>
                 <exclude>NOTICE</exclude>
                 <exclude>**/*.3pm</exclude>
@@ -517,8 +528,10 @@
                 <exclude>**/globals</exclude>
                 <exclude>**/.keep</exclude>
                 <exclude>**/EngSB.sln</exclude>
-                <exclude>README</exclude>
                 <exclude>**/nb-configuration.xml</exclude>
+                <exclude>**/*.checkstyle</exclude>
+                <!-- the exclusion for .rf-files should be removed, when the xmlstyle is fixed OPENENGSB-379 -->
+                <exclude>**/*.rf</exclude>
               </excludes>
               <mapping>
                 <bnd>SCRIPT_STYLE</bnd>
@@ -538,12 +551,57 @@
             <executions>
               <execution>
                 <id>check-headers</id>
-                <phase>verify</phase>
+                <phase>validate</phase>
                 <goals>
                   <goal>check</goal>
                 </goals>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>license-format</id>
+      <build>
+        <plugins>
+          <plugin>
+            <inherited>false</inherited>
+            <groupId>com.mycila.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>check-headers</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>format</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>integration-test</id>
+      <modules>
+        <module>integrationtest</module>
+      </modules>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${plugin.surefire.version}</version>
+            <configuration>
+              <excludes>
+                <exclude>*</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Test.java</include>
+                <include>**/*IT.java</include>
+              </includes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
@@ -566,6 +624,12 @@
       <name>twdata.org Maven 2 Repository</name>
       <url>http://twdata-m2-repository.googlecode.com/svn/</url>
     </pluginRepository>
+    <pluginRepository>
+      <id>jai.repository</id>
+      <name>JAI Repository (indirectly used by Docbook plugin)</name>
+      <url>https://m2proxy.atlassian.com/repository/public</url>
+    </pluginRepository>
+
   </pluginRepositories>
 
   <repositories>
@@ -633,6 +697,13 @@
     <repository>
       <id>apache-release</id>
       <url>https://repository.apache.org/content/repositories/releases</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>jgit</id>
+      <url>http://download.eclipse.org/jgit/maven</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>

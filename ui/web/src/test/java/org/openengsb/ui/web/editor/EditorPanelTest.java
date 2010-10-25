@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.wicket.Component;
@@ -69,6 +70,7 @@ public class EditorPanelTest {
 
     @Before
     public void setup() {
+        Locale.setDefault(Locale.ENGLISH);
         attribOption = newAttribute("attribOption", "option", "").option("label_a", "1").option("label_b", "2").build();
         attribBoolean = newAttribute("attribBool", "bool", "").asBoolean().build();
     }
@@ -154,12 +156,13 @@ public class EditorPanelTest {
 
     @Test
     public void putLetterIntoNumberField_shouldResultInError() throws Exception {
+        
         startEditorPanel(numberAttrib);
         FormTester formTester = tester.newFormTester(editor.getId() + ":form");
         String buildFormComponentId = buildFormComponentId(numberAttrib.getId());
         formTester.setValue(buildFormComponentId, "A");
         tester.executeAjaxEvent(editor.getId() + ":form:submitButton", "onclick");
-        tester.assertErrorMessages(new String[] { "Number formating Error" });
+        tester.assertErrorMessages(new String[]{ "Number formating Error" });
     }
 
     @Test
@@ -195,7 +198,7 @@ public class EditorPanelTest {
         String buildFormComponentId = buildFormComponentId(a.getId());
         formTester.setValue(buildFormComponentId, "1");
         tester.executeAjaxEvent(editor.getId() + ":form:submitButton", "onclick");
-        tester.assertErrorMessages(new String[] { "Validation Error" });
+        tester.assertErrorMessages(new String[]{ "Validation Error" });
     }
 
     @Test
@@ -214,14 +217,14 @@ public class EditorPanelTest {
 
                 Map<String, String> errorMessages = new HashMap<String, String>();
                 for (String key : arrayList) {
-                    errorMessages.put(key, "validation.not");
+                    errorMessages.put(key, "Validation Error");
                 }
                 return new MultipleAttributeValidationResultImpl(false, errorMessages);
             }
 
             @Override
             public List<String> fieldsToValidate() {
-                return Arrays.asList(new String[] { "attrib1", "attrib2" });
+                return Arrays.asList(new String[]{ "attrib1", "attrib2" });
             }
         };
         startEditorPanel(validator, attrib1, attrib2);
@@ -231,15 +234,15 @@ public class EditorPanelTest {
         formTester.setValue(component1Id, "a");
         formTester.setValue(component2Id, "b");
         tester.executeAjaxEvent(editor.getId() + ":form:submitButton", "onclick");
-        tester.assertErrorMessages(new String[] { "Validation Error", "Validation Error" });
+        tester.assertErrorMessages(new String[]{ "Validation Error", "Validation Error" });
     }
 
-    @SuppressWarnings({ "unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Test
     public void addFailFieldValidator_ShouldNotCallFormValidator() {
         AttributeDefinition attrib1 = newAttribute("attrib1", "name1", "desc1").validator(new FailValidator()).build();
         FormValidator mock = Mockito.mock(FormValidator.class);
-        Mockito.when(mock.fieldsToValidate()).thenReturn(Arrays.asList(new String[] { "attrib1" }));
+        Mockito.when(mock.fieldsToValidate()).thenReturn(Arrays.asList(new String[]{ "attrib1" }));
         startEditorPanel(mock, attrib1);
         FormTester formTester = tester.newFormTester(editor.getId() + ":form");
         String component1Id = buildFormComponentId(attrib1.getId());

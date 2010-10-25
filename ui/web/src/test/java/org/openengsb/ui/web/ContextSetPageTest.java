@@ -49,7 +49,7 @@ import org.openengsb.core.common.Domain;
 import org.openengsb.core.common.DomainProvider;
 import org.openengsb.core.common.context.ContextCurrentService;
 import org.openengsb.core.common.internal.ContextImpl;
-import org.openengsb.ui.web.service.DomainService;
+import org.openengsb.core.common.service.DomainService;
 import org.osgi.framework.ServiceReference;
 
 public class ContextSetPageTest {
@@ -106,7 +106,6 @@ public class ContextSetPageTest {
         assertThat(textField.isEnabled(), is(true));
         FormTester formTester = tester.newFormTester("form");
         formTester.setValue(textFieldId, "a");
-        node = (AjaxLink<?>) tester.getComponentFromLastRenderedPage(nodeLinkId);
         tester.executeAjaxEvent(textField, "onblur");
         verify(contextService).putValue("/a/b/c/d", "a");
     }
@@ -123,7 +122,6 @@ public class ContextSetPageTest {
         assertThat(textField.isEnabled(), is(true));
         FormTester formTester = tester.newFormTester("form");
         formTester.setValue(textFieldId, "");
-        node = (AjaxLink<?>) tester.getComponentFromLastRenderedPage(nodeLinkId);
         tester.executeAjaxEvent(textField, "onblur");
         verify(contextService).putValue("/a/b/c/d", "");
     }
@@ -305,6 +303,6 @@ public class ContextSetPageTest {
                 .putValue("x/y/z", "testvalue");
         tester.executeAjaxEvent("form:save", "onclick");
         verify(contextService).putValue("x/y/z", "testvalue");
-        tester.assertErrorMessages(new String[] {"key identifies a path, put operation not allowed"});
+        tester.assertErrorMessages(new String[]{ "key identifies a path, put operation not allowed" });
     }
 }

@@ -40,7 +40,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.openengsb.core.common.context.Context;
 import org.openengsb.core.common.context.ContextService;
-import org.openengsb.ui.web.service.DomainService;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.ui.web.tree.ModelBean;
 import org.openengsb.ui.web.tree.PropertyEditableColumn;
 
@@ -77,7 +77,7 @@ public class ContextSetPage extends BasePage {
                 getTree().updateTree(target);
             }
         });
-        IColumn[] columns = new IColumn[] {
+        IColumn[] columns = new IColumn[]{
             new PropertyTreeColumn(new ColumnLocation(Alignment.LEFT, 18, Unit.EM), "Tree Column",
                         "userObject.niceKey"),
             new PropertyEditableColumn(new ColumnLocation(Alignment.LEFT, 12, Unit.EM), "value",

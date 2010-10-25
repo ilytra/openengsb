@@ -38,10 +38,10 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.openengsb.core</groupId>
-      <artifactId>openengsb-core-common</artifactId>
-      <version>${pom.version}</version>
-      <scope>provided</scope>
+      <groupId>org.neodatis</groupId>
+      <artifactId>neodatis-odb</artifactId>
+      <version>${odb.version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

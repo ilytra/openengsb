@@ -16,18 +16,19 @@
 
 package org.openengsb.core.common.l10n;
 
+import java.io.Serializable;
 import java.util.Locale;
 
-public interface StringLocalizer {
+public interface StringLocalizer extends Serializable {
 
     /**
      * Localize a string identified by the given {@code key} to the given {@code locale}.
      */
-    String getString(String key, Locale locale);
+    String getString(String key, Locale locale, String... parameters);
 
     /**
      * Returs a {@code LocalizableString} where the actual localization is done in a later step by calling
      * {@link org.openengsb.core.common.l10n.LocalizableString#getString(Locale) }.
      */
-    LocalizableString getString(String key);
+    LocalizableString getString(String key, String... parameters);
 }

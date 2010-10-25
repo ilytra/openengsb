@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,24 +38,14 @@ public abstract class PersistenceServiceTest {
 
     @Before
     public void init() throws Exception {
-        this.persistence = createPersitenceService();
+        persistence = createPersitenceService();
 
         beanA = new PersistenceTestBean("A", 1, null);
         beanB = new PersistenceTestBean("B", 1, null);
         beanC = new PersistenceTestBean("C", 3, beanB);
         beanB.setReference(beanC);
 
-        persistence.create(Arrays.asList(new PersistenceTestBean[]{beanA, beanB, beanC}));
-    }
-
-    @Test
-    public void testWildcardQuery_shouldReturnAllResults() {
-        PersistenceTestBean example = new PersistenceTestBean(null, null, null);
-        List<PersistenceTestBean> results = persistence.query(example);
-        assertThat(results.size(), is(3));
-        assertThat(results.contains(beanA), is(true));
-        assertThat(results.contains(beanB), is(true));
-        assertThat(results.contains(beanC), is(true));
+        persistence.create(Arrays.asList(new PersistenceTestBean[]{ beanA, beanB, beanC }));
     }
 
     @Test
@@ -93,7 +82,7 @@ public abstract class PersistenceServiceTest {
         List<PersistenceTestBean> results = persistence.query(example);
         results.addAll(persistence.query(example2));
         List<PersistenceTestBean> results2 =
-            persistence.query(Arrays.asList(new PersistenceTestBean[]{example, example2}));
+            persistence.query(Arrays.asList(new PersistenceTestBean[]{ example, example2 }));
         assertThat(results2, is(results));
     }
 
@@ -134,7 +123,7 @@ public abstract class PersistenceServiceTest {
     public void testMultiCreate_shouldWork() throws PersistenceException {
         PersistenceTestBean additional1 = new PersistenceTestBean("Test", 1, null);
         PersistenceTestBean additional2 = new PersistenceTestBean("Test", 2, null);
-        persistence.create(Arrays.asList(new PersistenceTestBean[]{additional1, additional2}));
+        persistence.create(Arrays.asList(new PersistenceTestBean[]{ additional1, additional2 }));
 
         List<PersistenceTestBean> results = persistence.query(new PersistenceTestBean("Test", null, null));
         assertThat(results.size(), is(2));
@@ -199,33 +188,6 @@ public abstract class PersistenceServiceTest {
     }
 
     @Test
-    public void testMultipleUpdateFailure_noUpdateShouldHaveBeenDone() throws PersistenceException {
-        Map<PersistenceTestBean, PersistenceTestBean> toUpdate =
-            new HashMap<PersistenceTestBean, PersistenceTestBean>();
-
-        PersistenceTestBean newBeanA = new PersistenceTestBean("Foo", 1, null);
-        PersistenceTestBean additional = new PersistenceTestBean("Test", 1, null);
-
-        persistence.create(additional);
-        persistence.create(additional);
-
-        toUpdate.put(beanA, newBeanA);
-        toUpdate.put(additional, newBeanA);
-
-        try {
-            persistence.update(toUpdate);
-            Assert.fail("Multi update should fail with a persistence exception because the source element"
-                    + " of one of the updates is not unique.");
-        } catch (PersistenceException pe) {
-            // do nothing
-        }
-        List<PersistenceTestBean> results = persistence.query(new PersistenceTestBean("A", 1, null));
-        assertThat(results.size(), is(1));
-        PersistenceTestBean result = results.get(0);
-        assertThat(result, is(beanA));
-    }
-
-    @Test
     public void testDelete_shouldDeleteElement() throws PersistenceException {
         persistence.delete(beanA);
         List<PersistenceTestBean> results = persistence.query(new PersistenceTestBean("A", 1, null));
@@ -257,7 +219,7 @@ public abstract class PersistenceServiceTest {
 
         PersistenceTestBean aAndB = new PersistenceTestBean(null, 1, null);
         PersistenceTestBean c = new PersistenceTestBean("C", 3, null);
-        List<PersistenceTestBean> toDelete = Arrays.asList(new PersistenceTestBean[]{aAndB, c});
+        List<PersistenceTestBean> toDelete = Arrays.asList(new PersistenceTestBean[]{ aAndB, c });
         persistence.delete(toDelete);
 
         results = persistence.query(wildcard);

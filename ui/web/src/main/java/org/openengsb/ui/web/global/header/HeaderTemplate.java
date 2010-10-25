@@ -16,6 +16,9 @@
 
 package org.openengsb.ui.web.global.header;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -24,15 +27,13 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.openengsb.ui.web.ContextSetPage;
 import org.openengsb.ui.web.Index;
 import org.openengsb.ui.web.SendEventPage;
 import org.openengsb.ui.web.ServiceListPage;
 import org.openengsb.ui.web.TestClient;
 import org.openengsb.ui.web.global.BookmarkablePageLabelLink;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class HeaderTemplate extends Panel {
@@ -97,23 +98,23 @@ public class HeaderTemplate extends Panel {
 
     /**
      * adds new item to main header navigation
-     * 
+     *
      * @param index - the name of the index @see HeaderMenuItem.index
      * @param linkClass - class name to be linked to
      * @param langKey - language key, the text which should be displayed
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void addHeaderMenuItem(String index, Class<? extends WebPage> linkClass, String langKey) {
-        this.menuItems.add(new HeaderMenuItem(index, new BookmarkablePageLabelLink("link", linkClass, this
-                .getLocalizer().getString(langKey, this))));
+        StringResourceModel label = new StringResourceModel(langKey, this, null);
+        this.menuItems.add(new HeaderMenuItem(index, new BookmarkablePageLabelLink("link", linkClass, label)));
         this.avialableItems.add(index);
     }
 
     /**
      * single header menu item
-     * 
+     *
      */
-    private class HeaderMenuItem implements Serializable {
+    private static class HeaderMenuItem implements Serializable {
 
         private final String index;
         private final BookmarkablePageLabelLink<? extends WebPage> link;

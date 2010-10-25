@@ -32,27 +32,18 @@ public interface ServiceManager {
     ServiceDescriptor getDescriptor();
 
     /**
-     * Creates or updates a service instance. If the given id does not exist,
-     * this creates a new service instance.
+     * Creates or updates a service instance. If the given id does not exist, this creates a new service instance.
      *
      * @param id identifier for a new or already existing service instance.
      * @param attributes updates to maybe already set attributes.
+     * @return the result of the validation
      */
-    void update(String id, Map<String, String> attributes);
+    MultipleAttributeValidationResult update(String id, Map<String, String> attributes);
 
-    /**
-     * Creates or updates a service instance. If the given id does not exist,
-     * this creates a new service instance.
-     *
-     * @param id identifier for a new or already existing service instance.
-     * @param attributes updates to maybe already set attributes.
-     */
-    MultipleAttributeValidationResult updateWithValidation(String id, Map<String, String> attributes);
     /**
      * Deletes the service instanced with the given {@code id}.
      *
-     * @param id identifier for a service instance provided by this
-     *        {@code ServiceManager}.
+     * @param id identifier for a service instance provided by this {@code ServiceManager}.
      *
      * @throws IllegalArgumentException if no instance exists for the given id.
      */
@@ -60,6 +51,7 @@ public interface ServiceManager {
 
     /**
      * Returns the attributes with values for the specified service instance.
+     *
      * @param id identifier for a already existing service instance
      */
     Map<String, String> getAttributeValues(String id);

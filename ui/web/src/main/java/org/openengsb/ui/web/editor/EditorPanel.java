@@ -25,6 +25,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormValidatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.ajax.markup.html.IndicatingAjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -36,6 +37,8 @@ import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidationError;
+import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.AbstractValidator;
 import org.openengsb.core.common.descriptor.AttributeDefinition;
 import org.openengsb.core.common.validation.FieldValidator;
@@ -93,14 +96,15 @@ public abstract class EditorPanel extends Panel {
                 public void validate(Form<?> form) {
                     Map<String, FormComponent<?>> loadFormComponents = loadFormComponents(form);
                     Map<String, String> toValidate = new HashMap<String, String>();
-                    for (String key : loadFormComponents.keySet()) {
-                        toValidate.put(key, loadFormComponents.get(key).getValue());
+                    for (Map.Entry<String, FormComponent<?>> entry : loadFormComponents.entrySet()) {
+                        toValidate.put(entry.getKey(), entry.getValue().getValue());
                     }
                     MultipleAttributeValidationResult validate = validator.validate(toValidate);
                     if (!validate.isValid()) {
                         Map<String, String> attributeErrorMessages = validate.getAttributeErrorMessages();
-                        for (String key : attributeErrorMessages.keySet()) {
-                            error(loadFormComponents.get(key), attributeErrorMessages.get(key));
+                        for (Map.Entry<String, String> entry : attributeErrorMessages.entrySet()) {
+                            FormComponent<?> fc = loadFormComponents.get(entry.getKey());
+                            fc.error((IValidationError) new ValidationError().setMessage(entry.getValue()));
                         }
                     }
                 }
@@ -126,7 +130,7 @@ public abstract class EditorPanel extends Panel {
             });
         }
         // form.add(new Button("submitButton"));
-        AjaxButton submitButton = new AjaxButton("submitButton", form) {
+        AjaxButton submitButton = new IndicatingAjaxButton("submitButton", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 EditorPanel.this.onSubmit();
@@ -176,7 +180,7 @@ public abstract class EditorPanel extends Panel {
     }
 
     private abstract static class EditorFieldValidator<T> extends AbstractValidator<T> {
-        private AttributeDefinition attribute;
+        private final AttributeDefinition attribute;
 
         protected EditorFieldValidator(AttributeDefinition attribute) {
             this.attribute = attribute;

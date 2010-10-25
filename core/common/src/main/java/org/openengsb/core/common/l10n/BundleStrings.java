@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +32,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 /**
- * Localization helper to lookup string resources from the bundle's localization
- * entries.
+ * Localization helper to lookup string resources from the bundle's localization entries.
  */
+@SuppressWarnings("serial")
 public class BundleStrings implements StringLocalizer {
 
-    private Bundle bundle;
     private HashMap<String, Properties> entries;
 
     public BundleStrings() {
@@ -47,11 +47,11 @@ public class BundleStrings implements StringLocalizer {
     }
 
     @Override
-    public LocalizableString getString(final String key) {
+    public LocalizableString getString(final String key, final String... parameters) {
         return new LocalizableString() {
             @Override
             public String getString(Locale locale) {
-                return BundleStrings.this.getString(key, locale);
+                return BundleStrings.this.getString(key, locale, parameters);
             }
 
             @Override
@@ -62,7 +62,7 @@ public class BundleStrings implements StringLocalizer {
     }
 
     @Override
-    public String getString(String key, Locale locale) {
+    public String getString(String key, Locale locale, String... parameters) {
         @SuppressWarnings("unchecked")
         List<Locale> locales = LocaleUtils.localeLookupList(locale, new Locale(""));
         for (Locale l : locales) {
@@ -71,7 +71,9 @@ public class BundleStrings implements StringLocalizer {
                 continue;
             }
             if (p.containsKey(key)) {
-                return p.getProperty(key);
+                String property = p.getProperty(key);
+                String format = MessageFormat.format(property, (Object[]) parameters);
+                return format;
             }
         }
         return null;
@@ -92,7 +94,6 @@ public class BundleStrings implements StringLocalizer {
     }
 
     public void setBundle(Bundle bundle) {
-        this.bundle = bundle;
         String path = (String) bundle.getHeaders().get(Constants.BUNDLE_LOCALIZATION);
         if (path == null) {
             path = Constants.BUNDLE_LOCALIZATION_DEFAULT_BASENAME;
@@ -100,15 +101,15 @@ public class BundleStrings implements StringLocalizer {
         path = path.trim();
         int idx = path.lastIndexOf('/');
         if (idx == -1) {
-            buildEntriesMap("/", path);
+            buildEntriesMap(bundle, "/", path);
         } else if (idx == 0) {
-            buildEntriesMap("/", path.substring(1));
+            buildEntriesMap(bundle, "/", path.substring(1));
         } else {
-            buildEntriesMap(path.substring(0, idx), path.substring(idx + 1));
+            buildEntriesMap(bundle, path.substring(0, idx), path.substring(idx + 1));
         }
     }
 
-    private void buildEntriesMap(String directory, String basename) {
+    private void buildEntriesMap(Bundle bundle, String directory, String basename) {
         @SuppressWarnings("unchecked")
         Enumeration<URL> resources = bundle.findEntries(directory, basename + "*.properties", false);
         entries = new HashMap<String, Properties>();

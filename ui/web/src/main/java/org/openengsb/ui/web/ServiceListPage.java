@@ -38,9 +38,9 @@ import org.openengsb.core.common.ServiceManager;
 import org.openengsb.core.common.descriptor.ServiceDescriptor;
 import org.openengsb.core.common.l10n.LocalizableString;
 import org.openengsb.core.common.l10n.PassThroughLocalizableString;
+import org.openengsb.core.common.service.DomainService;
 import org.openengsb.core.common.util.AliveState;
 import org.openengsb.ui.web.model.LocalizableStringModel;
-import org.openengsb.ui.web.service.DomainService;
 import org.osgi.framework.ServiceReference;
 
 public class ServiceListPage extends BasePage {
@@ -179,7 +179,7 @@ public class ServiceListPage extends BasePage {
 
     @SuppressWarnings("serial")
     private LoadableDetachableModel<ServiceManager> createLoadableDetachableServiceManagerModel(
-        final ServiceManager sm) {
+            final ServiceManager sm) {
         return new LoadableDetachableModel<ServiceManager>() {
             @Override
             protected ServiceManager load() {
@@ -199,7 +199,7 @@ public class ServiceListPage extends BasePage {
 
     @SuppressWarnings("serial")
     private LoadableDetachableModel<List<ServiceReference>> createLoadableServiceReferenceModel(
-        final AliveState state) {
+            final AliveState state) {
         return new LoadableDetachableModel<List<ServiceReference>>() {
             @Override
             protected List<ServiceReference> load() {
